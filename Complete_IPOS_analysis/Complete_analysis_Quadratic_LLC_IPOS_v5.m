@@ -21,7 +21,7 @@ Rmax = 2450;
 %the rated input voltage gain (criteria discussed for the partciular gain
 %profiles of this architecture)
 
-% %First idea
+%First idea
 % Gtot_res = 350/36.5;
 % n1 = 1/(sqrt(Gtot_res)-1);
 % n2 = n1;
@@ -81,7 +81,7 @@ title('Gain distribution between stages','FontSize',25);
 ylabel('Gain (V/V)','interpreter','tex','FontSize',20);
 xlabel('Input Voltage (V)','FontSize',20);
 xlim([15 43]);
-yticks(0:1:25)
+yticks(0:5:25)
 grid on;
 
 legendString = {};
@@ -97,9 +97,56 @@ G2 = profileG2(V,G1);
 plot(V,G2,'LineWidth',2,'Color','r','LineStyle',':');
 legendString = [legendString 'Second stage gain G_{2}'];
 
+fontsize(gca,20,"pixels");
 lgd = legend(legendString,'Interpreter','tex','Location','northeast','FontSize',20);
 
 %% End of gain profiles
+
+%% Definition and graph of the desired gain profiles
+
+%{
+
+In this code snippet the voltage stress reduction for each stage is
+analyzed based on the final gain profiles
+
+%}
+
+legendString = {};
+figure
+hold on;
+title('Voltage stress reduction','FontSize',25);
+ylabel('Output voltage (V)','interpreter','tex','FontSize',20);
+xlabel('Input Voltage (V)','FontSize',20);
+set(gca,'FontSize',15);
+xlim([15 43]);
+grid on;
+
+plot(V,V.*G1,'LineStyle','-','LineWidth',2,'Color','k');
+legendString = [legendString 'First stage output voltage (IPOS)'];
+plot(V,V.*(G1+1),'LineStyle','--','LineWidth',2,'Color','r');
+legendString = [legendString 'First stage output voltage (Pure quadratic)'];
+legend(legendString,'FontSize',15,'Location','northwest');
+
+legendString = {};
+figure
+hold on;
+title('Voltage stress reduction','FontSize',25);
+ylabel('Output voltage (V)','interpreter','tex','FontSize',20);
+xlabel('Input Voltage (V)','FontSize',20);
+set(gca,'FontSize',15);
+xlim([15 43]);
+ylim([175 400]);
+grid on;
+
+plot(V,V.*(G1+1).*G2,'LineStyle','-','LineWidth',2,'Color','k');
+legendString = [legendString 'Second stage output voltage (IPOS)'];
+plot(V,V.*(G1+1).*(G2+1),'LineStyle','--','LineWidth',2,'Color','r');
+legendString = [legendString 'Second stage output voltage (Pure quadratic)'];
+legend(legendString,'FontSize',15,'Location','east');
+
+%% End of voltage stresses
+
+%% Load morphing
 
 
 %{
@@ -296,7 +343,7 @@ fr = 100e3;
 Lr = 11.3e-6;
 Cr = (1/(2*pi*fr))^2/Lr;
 m_min = 5; % minimum m to try
-m_max = 10; % maximum m to try
+m_max = 7; % maximum m to try
 
 %FHA normalized gain
 K = @(Q,m,Fx) Fx.^2*(m-1)./(((m-1)^2*Q^2*Fx.^2.*(1-Fx.^2).^2 + (Fx.^2*m-1).^2).^0.5);
@@ -320,6 +367,7 @@ title('Normalized first stage gain limits (with FHA)','FontSize',25);
 xlabel('Voltage (V)','FontSize',20);
 xlim([15 43]);
 ylabel('Normalized first stage gain','FontSize',20);
+fontsize(gca,20,"pixels");
 
 legendString = {};
 
@@ -361,8 +409,8 @@ lgd = legend(legendString,'Interpreter','tex','Location','eastoutside');
 fr = 100e3;
 Lr = 9.38e-6;
 Cr = (1/(2*pi*fr))^2/Lr;
-m_min = 10; % minimum m to try
-m_max = 15; % maximum m to try
+m_min = 12; % minimum m to try
+m_max = 14; % maximum m to try
 
 %color palette
 startColor = [0 0 1];
@@ -378,6 +426,7 @@ title('Normalized second stage gain limits (with FHA)','FontSize',25);
 xlabel('Voltage (V)','FontSize',20);
 xlim([15 43]);
 ylabel('Normalized second stage gain','FontSize',20);
+fontsize(gca,20,"pixels");
 
 legendString = {};
 
