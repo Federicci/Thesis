@@ -408,12 +408,12 @@ losses = [
 
 % Define labels for each type of loss
 labels = {
-    '  First stage switches', ...
-    '  First stage rectifier', ...
-    '  First stage transformer copper', ...
-    '  First stage transformer core', ...
-    '  First stage filter capacitor', ...
-    '  First stage resonator capacitor'
+    '  Switches', ...
+    '  Rectifier diodes', ...
+    '  Transformer copper', ...
+    '  Transformer core', ...
+    '  Output capacitor', ...
+    '  Resonator capacitor'
 };
 
 % Calculate total losses
@@ -428,11 +428,12 @@ end
 
 % Create the bar chart for the first stage
 figure;
+subplot(2,1,1);
 barh(losses, 'FaceColor', [0.8 0 0]);
 xlabel('Power Loss (W)','fontSize',20);
 xlim([0 ceil(max(losses)+1)]);
-ylabel('Type of Loss','fontSize',25);
-title('First Stage Power Budget','fontSize',30);
+ylabel('Type of Loss','fontSize',20);
+title('First Stage Power Budget','fontSize',25);
 set(gca, 'YTickLabel', labels, 'YTick', 1:length(labels));
 grid on;
 
@@ -457,12 +458,12 @@ losses = [
 
 % Define labels for each type of loss
 labels = {
-    '  Second stage switches', ...
-    '  Second stage rectifier', ...
-    '  Second stage transformer copper', ...
-    '  Second stage transformer core', ...
-    '  Second stage filter capacitor', ...
-    '  Second stage resonator capacitor'
+    '  Switches', ...
+    '  Rectifier diodes', ...
+    '  Transformer copper', ...
+    '  Transformer core', ...
+    '  Output capacitor', ...
+    '  Resonator capacitor'
 };
 
 % Calculate total losses
@@ -476,13 +477,14 @@ if totalLosses < 1
 end
 
 % Create the bar chart for the second stage
-figure;
+% figure;
+subplot(2,1,2);
 barh(losses, 'FaceColor', [0.8, 0, 0]);
 xlabel('Power Loss (W)','FontSize',20);
-ylabel('Type of Loss','FontSize',25);
+ylabel('Type of Loss','FontSize',20);
 xlim([0 ceil(max(losses)+1)]);
-title('Second Stage Power Budget','FontSize',30);
-set(gca, 'YTickLabel', labels, 'YTick', 1:length(labels),'fontSize',15);
+title('Second Stage Power Budget','FontSize',25);
+set(gca, 'YTickLabel', labels, 'YTick', 1:length(labels));
 grid on;
 
 % Add text labels with specific values and percentages
