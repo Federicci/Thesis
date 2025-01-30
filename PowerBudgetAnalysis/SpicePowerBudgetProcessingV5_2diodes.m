@@ -394,9 +394,9 @@ fprintf('System Efficiency: %.2f%%\n', efficiency_system);
 fprintf('First Stage Efficiency: %.2f%%\n', efficiency_stg1);
 fprintf('Second Stage Efficiency: %.2f%%\n', efficiency_stg2);
 
-%% Pie charts with power budget
+%% Horizontal Bar Charts with Power Budget
 
-% Prepare the data for the first stage pie chart
+% Define data for the first stage
 losses = [
     FirstBridgeLosses, ...
     FirstRectifierLosses, ...
@@ -406,64 +406,46 @@ losses = [
     FirstResonatorCapacitorLosses
 ];
 
-% Legends for the pie chart
-totalLosses = sum(losses);
-legendLabels = {
-    ['First stage switches losses (' num2str(FirstBridgeLosses,'%.3f') 'W)(' num2str(100*FirstBridgeLosses/totalLosses,'%.2f') '%)'], ...
-    ['First stage rectifier losses (' num2str(FirstRectifierLosses,'%.3f') 'W)(' num2str(100*FirstRectifierLosses/totalLosses,'%.2f') '%)'], ...
-    ['First stage transformer copper losses (' num2str(FirstTransformerCopperLosses,'%.3f') 'W)(' num2str(100*FirstTransformerCopperLosses/totalLosses,'%.2f') '%)'], ...
-    ['First stage transformer core losses (' num2str(FirstTransformerCoreLosses,'%.3f') 'W)(' num2str(100*FirstTransformerCoreLosses/totalLosses,'%.2f') '%)'], ...
-    ['First stage filter capacitor losses (' num2str(FirstFilterCapacitorLosses,'%.3f') 'W)(' num2str(100*FirstFilterCapacitorLosses/totalLosses,'%.2f') '%)'], ...
-    ['First stage resonator capacitor losses (' num2str(FirstResonatorCapacitorLosses,'%.3f') 'W)(' num2str(100*FirstResonatorCapacitorLosses/totalLosses,'%.2f') '%)']
+% Define labels for each type of loss
+labels = {
+    '  First stage switches', ...
+    '  First stage rectifier', ...
+    '  First stage transformer copper', ...
+    '  First stage transformer core', ...
+    '  First stage filter capacitor', ...
+    '  First stage resonator capacitor'
 };
 
-% Prepare the labels with values in watts
-labels = cell(size(losses));
+% Calculate total losses
+totalLosses = sum(losses);
+
+% Normalize values if necessary
+if totalLosses < 1
+    scalingFactor = 1 / totalLosses;
+    losses = losses * scalingFactor;
+    totalLosses = sum(losses);
+end
+
+% Create the bar chart for the first stage
+figure;
+barh(losses, 'FaceColor', [0.8 0 0]);
+xlabel('Power Loss (W)','fontSize',20);
+xlim([0 ceil(max(losses)+1)]);
+ylabel('Type of Loss','fontSize',25);
+title('First Stage Power Budget','fontSize',30);
+set(gca, 'YTickLabel', labels, 'YTick', 1:length(labels));
+grid on;
+
+% Add text labels with specific values and percentages
 for i = 1:length(losses)
-    % Create labels in the format "X W"
-    labels{i} = sprintf('%.3f W', losses(i));
+    valueText = sprintf('  %.3f W (%.2f%%)', losses(i), 100 * losses(i) / totalLosses);
+    text(losses(i), i, valueText, ...
+        'HorizontalAlignment', 'left', ...
+        'VerticalAlignment', 'middle', ...
+        'FontSize', 10);
 end
 
-% Create the pie chart with the custom labels
-
-%Losses rescaling if necessary as sum(losses)<1 can generate issues
-if sum(losses)<1
-    a = 1/sum(losses);
-    losses = losses*a;
-
-end
-
-figure
-p = pie(losses);
-
-% Assign the labels to the pie chart text objects and position them
-textObjects = findobj(p, 'Type', 'text');
-for i = 1:length(textObjects)
-    % Adjust position to be slightly outside the pie slice
-    pos = textObjects(i).Position;
-    pos = pos * 1.1; % Move labels further out from the center
-    textObjects(i).Position = pos;
-    textObjects(i).FontSize = 10; % Increase font size for readability
-    textObjects(i).Rotation = 180/pi*atan(textObjects(i).Position(2)/textObjects(i).Position(1));
-    textObjects(i).String = labels{i};
-    textObjects(i).HorizontalAlignment = 'center'; % Center align the text
-    textObjects(i).VerticalAlignment = 'middle';
-end
-
-%Colormap
-colormap("turbo");
-
-% Add legend with descriptive labels
-legendObj = legend(legendLabels, 'Location', 'southoutside', 'FontSize', 10);
-% Set the position of the legend manually to make space for the title above it
-legendPos = legendObj.Position; % Get current position of the legend
-
-% Add a title as an annotation (text box) above the legend
-annotation('textbox', [0.4, 0.25, 0.25, 0.05], ...
-    'String', 'First stage Power Budget', 'FontSize', 14, 'HorizontalAlignment', 'center', 'EdgeColor', 'none');
-
-
-% Prepare the data for the second stage pie chart
+% Define data for the second stage
 losses = [
     SecondBridgeLosses, ...
     SecondRectifierLosses, ...
@@ -473,61 +455,45 @@ losses = [
     SecondResonatorCapacitorLosses
 ];
 
-% Legends for the pie chart
-totalLosses = sum(losses);
-legendLabels = {
-    ['Second stage switches losses (' num2str(SecondBridgeLosses,'%.3f') 'W)(' num2str(100*SecondBridgeLosses/totalLosses,'%.2f') '%)'], ...
-    ['Second stage rectifier losses (' num2str(SecondRectifierLosses,'%.3f') 'W)(' num2str(100*SecondRectifierLosses/totalLosses,'%.2f') '%)'], ...
-    ['Second stage transformer copper losses (' num2str(SecondTransformerCopperLosses,'%.3f') 'W)(' num2str(100*SecondTransformerCopperLosses/totalLosses,'%.2f') '%)'], ...
-    ['Second stage transformer core losses (' num2str(SecondTransformerCoreLosses,'%.3f') 'W)(' num2str(100*SecondTransformerCoreLosses/totalLosses,'%.2f') '%)'], ...
-    ['Second stage filter capacitor losses (' num2str(SecondFilterCapacitorLosses,'%.3f') 'W)(' num2str(100*SecondFilterCapacitorLosses/totalLosses,'%.2f') '%)'], ...
-    ['Second stage resonator capacitor losses (' num2str(SecondResonatorCapacitorLosses,'%.3f') 'W)(' num2str(100*SecondResonatorCapacitorLosses/totalLosses,'%.2f') '%)']
+% Define labels for each type of loss
+labels = {
+    '  Second stage switches', ...
+    '  Second stage rectifier', ...
+    '  Second stage transformer copper', ...
+    '  Second stage transformer core', ...
+    '  Second stage filter capacitor', ...
+    '  Second stage resonator capacitor'
 };
 
-% Prepare the labels with values in watts
-labels = cell(size(losses));
+% Calculate total losses
+totalLosses = sum(losses);
+
+% Normalize values if necessary
+if totalLosses < 1
+    scalingFactor = 1 / totalLosses;
+    losses = losses * scalingFactor;
+    totalLosses = sum(losses);
+end
+
+% Create the bar chart for the second stage
+figure;
+barh(losses, 'FaceColor', [0.8, 0, 0]);
+xlabel('Power Loss (W)','FontSize',20);
+ylabel('Type of Loss','FontSize',25);
+xlim([0 ceil(max(losses)+1)]);
+title('Second Stage Power Budget','FontSize',30);
+set(gca, 'YTickLabel', labels, 'YTick', 1:length(labels),'fontSize',15);
+grid on;
+
+% Add text labels with specific values and percentages
 for i = 1:length(losses)
-    % Create labels in the format "X W"
-    labels{i} = sprintf('%.3f W', losses(i));
+    valueText = sprintf('  %.3f W (%.2f%%)', losses(i), 100 * losses(i) / totalLosses);
+    text(losses(i), i, valueText, ...
+        'HorizontalAlignment', 'left', ...
+        'VerticalAlignment', 'middle', ...
+        'FontSize', 10);
 end
 
-% Create the pie chart with the custom labels
-
-%Losses rescaling if necessary as sum(losses)<1 can generate issues
-if sum(losses)<1
-    a = 1/sum(losses);
-    losses = losses*a;
-
-end
-
-figure
-p = pie(losses);
-
-% Assign the labels to the pie chart text objects and position them
-textObjects = findobj(p, 'Type', 'text');
-for i = 1:length(textObjects)
-    % Adjust position to be slightly outside the pie slice
-    pos = textObjects(i).Position;
-    pos = pos * 1.1; % Move labels further out from the center
-    textObjects(i).Position = pos;
-    textObjects(i).FontSize = 10; % Increase font size for readability
-    textObjects(i).Rotation = 180/pi*atan(textObjects(i).Position(2)/textObjects(i).Position(1));
-    textObjects(i).String = labels{i};
-    textObjects(i).HorizontalAlignment = 'center'; % Center align the text
-    textObjects(i).VerticalAlignment = 'middle';
-end
-
-%Colormap
-colormap("turbo");
-
-% Add legend with descriptive labels
-legendObj = legend(legendLabels, 'Location', 'southoutside', 'FontSize', 10);
-% Set the position of the legend manually to make space for the title above it
-legendPos = legendObj.Position; % Get current position of the legend
-
-% Add a title as an annotation (text box) above the legend
-annotation('textbox', [0.4, 0.25, 0.25, 0.05], ...
-    'String', 'Second stage Power Budget', 'FontSize', 14, 'HorizontalAlignment', 'center', 'EdgeColor', 'none');
 
 
 
@@ -696,5 +662,6 @@ addStyle(t, s);
 % Optionally, set the row and column striping color
 t.RowStriping = 'off';  % Disable row striping
 t.BackgroundColor = [1 1 1];
+
 
 
